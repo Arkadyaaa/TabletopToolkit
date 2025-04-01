@@ -38,7 +38,7 @@
 }
 
 .transparentBG{
-    -fx-background-color: transparent;
+    -fx-background-color: -fx-secondary-background;
 }
 
 .dropShadow{
@@ -155,7 +155,7 @@
 }
 
 
-.crichcheckbox > .box:hover {
+.richcheckbox > .box:hover {
     -fx-border-color: -fx-primary;
 }
 
@@ -212,11 +212,94 @@
     -fx-background-color: -fx-primary;
 }
 
-.resultBottomBar {
-}
-
-.resultCloseButton{
+.resultCloseButton {
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+}
+
+.rightPane{
+    -fx-text-fill: #FFFFFF;
+}
+
+.sectorsArea {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: -fx-background;
+
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0;
+}
+
+.sectorsArea .content {
+    -fx-background-color: -fx-background;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+
+    -fx-padding: 8px 10px 8px 10px; /* Top, Right, Bottom, Left */
+}
+
+.sectorsArea .viewport {
+    -fx-background-radius: 10px; /* Fixes inner sharp corners */
+    -fx-background-insets: 0;
+}
+
+.rightPaneTop {
+    -fx-alignment: center;
+}
+
+.rightPaneListLabel {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+}
+
+
+.rightPaneButton {
+    -fx-background-color: transparent;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-content-display: center; 
+
+    -fx-border-color: -fx-button-border;
+    -fx-border-width: 2px;
+    
+    -fx-text-fill: white;
+}
+
+.rightPaneButton:hover {
+    -fx-border-color: -fx-primary;
+}
+
+.rightPaneButton:pressed {
+    -fx-border-color: -fx-button-pressed;
+}
+
+.rightPaneCheckbox > .box {
+    -fx-background-color: transparent;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    
+    -fx-border-color: -fx-button-border;
+    -fx-border-width: 2px;
+}
+
+rightPaneCheckbox > .box:hover {
+    -fx-border-color: -fx-primary;
+}
+
+.rightPaneCheckbox:selected > .box {
+    -fx-border-color: -fx-primary;
+    -fx-background-color: -fx-primary;
+}
+
+.rightPaneCheckbox:selected > .box > .mark {
+    -fx-background-color: white;
+}
+
+.rightPaneCheckbox:pressed > .box {
+    -fx-border-color: -fx-button-pressed;
 }

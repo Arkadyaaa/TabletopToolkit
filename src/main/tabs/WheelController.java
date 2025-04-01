@@ -3,11 +3,15 @@ package main.tabs;
 import java.util.Random;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
@@ -20,6 +24,9 @@ import main.components.WheelResultModal;
 public class WheelController {
     @FXML private Canvas wheelCanvas;
     @FXML private AnchorPane leftPane, middlePane, rightPane;
+    @FXML private Button shuffleButton, sortButton;
+    @FXML private CheckBox advancedCheckbox;
+    @FXML private TextArea textBox;
 
     private static final int WHEEL_SIZE = 400;
     private static final int SECTORS = 50;
@@ -112,13 +119,15 @@ public class WheelController {
             holdCounter = 0;
         } else {
             // Gradual deceleration
-            speed *= 0.98;
-            if (speed < 0.015) {
+            speed *= 0.99;
+            if (speed < 0.005) {
                 timeline.stop();
                 spinning = false;
                 canHold = true;
                 
-                showResultPopup();
+                PauseTransition delay = new PauseTransition(Duration.seconds(0.25));
+                delay.setOnFinished(e -> showResultPopup());
+                delay.play();
             }
         }
     }
@@ -126,12 +135,27 @@ public class WheelController {
     private void showResultPopup() {
         double angleStep = 360.0 / SECTORS;
         double adjustedAngle = (angle) % 360;  
-        int calculatedIndex = SECTORS - 1 - (int) Math.floor(adjustedAngle / angleStep);  
+        int calculatedIndex = SECTORS - (int) Math.floor(adjustedAngle / angleStep);  
         final int sectorIndex = (calculatedIndex + SECTORS) % SECTORS;
 
         Platform.runLater(() -> {
             new WheelResultModal(sectorIndex).show();
         });
+    }
+
+    @FXML
+    private void shuffleButton(){
+
+    }
+
+    @FXML
+    private void sortButton(){
+
+    }
+
+    @FXML
+    private void advancedToggle(){
+        
     }
 
 }
