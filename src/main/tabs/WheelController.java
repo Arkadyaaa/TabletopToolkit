@@ -1,17 +1,20 @@
 package main.tabs;
 
+import main.components.WheelSimpleRightPane;
+
 import java.util.Random;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
@@ -24,12 +27,10 @@ import main.components.WheelResultModal;
 public class WheelController {
     @FXML private Canvas wheelCanvas;
     @FXML private AnchorPane leftPane, middlePane, rightPane;
-    @FXML private Button shuffleButton, sortButton;
-    @FXML private CheckBox advancedCheckbox;
-    @FXML private TextArea textBox;
+    @FXML private SplitPane wheelSplitPane;
 
     private static final int WHEEL_SIZE = 400;
-    private static final int SECTORS = 50;
+    private int sectors;
     private Rotate rotate;
     private Timeline timeline;
     private double angle = 0;
@@ -43,9 +44,27 @@ public class WheelController {
     private double holdDurationMin = 0.5;
     private double holdDurationMax = 1;
     private Random random = new Random();
+    
+    // Wheel Theme (Add more themes in the future)
+    public String[] colors = {"#001f38", "#526079", "#9a7e8e", "#8f4a50", "#a06150", "#a1836b"};
+
+    private ListView<String> listView = new ListView<>();
+    ObservableList<String> items = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
+
+        WheelSimpleRightPane wheelSimpleRightPane = new WheelSimpleRightPane(this::drawWheel, items); // Pass the method as a callback
+        AnchorPane wheelSimpleAnchorPane = wheelSimpleRightPane.createRightPane();
+        wheelSimpleAnchorPane.setPrefHeight(603);
+        wheelSimpleAnchorPane.setPrefWidth(291);
+        wheelSimpleAnchorPane.setLayoutX(12);
+        wheelSimpleAnchorPane.setLayoutY(3);
+
+        rightPane.getChildren().add(wheelSimpleAnchorPane);
+
+        listView.setItems(items);
+
         holdDuration = randomDuration(holdDurationMin, holdDurationMax);
         drawWheel();
         rotate = new Rotate(0, WHEEL_SIZE / 2, WHEEL_SIZE / 2);
@@ -57,15 +76,22 @@ public class WheelController {
         return rangeMin + (rangeMax - rangeMin) * random.nextDouble();
     }
 
-    private void drawWheel() {
+    private void drawSimpleWheel() {
         GraphicsContext gc = wheelCanvas.getGraphicsContext2D();
-        double angleStep = 360.0 / SECTORS;
+        sectors = Math.max(items.size(), 1);
+        double angleStep = 360.0 / sectors;
         
-        // Wheel Theme (Add more themes in the future)
-        String[] colors = {"#001f38", "#526079", "#9a7e8e", "#8f4a50", "#a06150", "#a1836b"};
-        
-        for (int i = 0; i < SECTORS; i++) {
-            gc.setFill(Color.web(colors[i % colors.length]));
+        gc.clearRect(0, 0, wheelCanvas.getWidth(), wheelCanvas.getHeight()); // Clear canvas before drawing
+
+        for (int i = 0; i < sectors; i++) {
+            int j = i;
+
+            // Ensures that the first and last sector does not have the same color
+            if(i % colors.length == 0 && i != 0 && i+1 == listView.getItems().size()) {
+                j++;
+            }
+
+            gc.setFill(Color.web(colors[j % colors.length]));
             gc.fillArc(0, 0, WHEEL_SIZE, WHEEL_SIZE, i * angleStep, angleStep, ArcType.ROUND);
         }
         
@@ -74,13 +100,16 @@ public class WheelController {
         gc.setFont(new Font(14));
         gc.setTextAlign(TextAlignment.CENTER);
         middlePane.getStyleClass().add("dropShadow");
-
-        for (int i = 0; i < SECTORS; i++) {
+        
+        for (int i = 0; i < items.size(); i++) { 
             double midAngle = (i * angleStep) + (angleStep / 2);
             double radians = Math.toRadians(midAngle);
             double textX = (WHEEL_SIZE / 2) + (WHEEL_SIZE / 3 * Math.cos(radians));
             double textY = (WHEEL_SIZE / 2) + (WHEEL_SIZE / 3 * Math.sin(radians));
-            gc.fillText("" + (i + 1), textX, textY);
+            
+            if (i < items.size()) { // Ensures that we don't access out of bounds
+                gc.fillText(items.get(i), textX, textY);
+            }
         }
     }
 
@@ -133,29 +162,19 @@ public class WheelController {
     }
     
     private void showResultPopup() {
-        double angleStep = 360.0 / SECTORS;
+        double angleStep = 360.0 / sectors;
         double adjustedAngle = (angle) % 360;  
-        int calculatedIndex = SECTORS - (int) Math.floor(adjustedAngle / angleStep);  
-        final int sectorIndex = (calculatedIndex + SECTORS) % SECTORS;
+        int calculatedIndex = sectors - (int) Math.floor(adjustedAngle / angleStep);  
+        final int sectorIndex = (calculatedIndex + sectors) % sectors;
+        String resultText = "" + listView.getItems().get(sectorIndex - 1);
 
         Platform.runLater(() -> {
-            new WheelResultModal(sectorIndex).show();
+            new WheelResultModal(resultText).show();
         });
     }
 
-    @FXML
-    private void shuffleButton(){
-
-    }
-
-    @FXML
-    private void sortButton(){
-
-    }
-
-    @FXML
-    private void advancedToggle(){
-        
+    private void drawWheel(){
+        drawSimpleWheel();
     }
 
 }

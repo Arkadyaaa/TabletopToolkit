@@ -14,14 +14,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
 public class WheelResultModal {
-    private final int sectorIndex;
+    private String resultText;
     private Stage stage;
     private Label titleLabel;
     private Label resultLabel;
     private Button closeButton;
 
-    public WheelResultModal(int sectorIndex) {
-        this.sectorIndex = sectorIndex;
+    public WheelResultModal(String resultText) {
+        this.resultText = resultText;
     }
 
     public void show(){
@@ -59,7 +59,7 @@ public class WheelResultModal {
         bottomSection.setPadding(new Insets(20));
         bottomSection.getStyleClass().addAll("resultBottomBar", "resultRoundedCorner");
 
-        resultLabel = new Label(sectorIndex + "");
+        resultLabel = new Label(resultText + "");
         resultLabel.setStyle("-fx-font-size: 24px;");
 
         bottomSection.getChildren().add(resultLabel);

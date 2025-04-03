@@ -154,8 +154,7 @@
     -fx-font-size: 14px;
 }
 
-
-.richcheckbox > .box:hover {
+.rich-checkbox > .box:hover {
     -fx-border-color: -fx-primary;
 }
 
